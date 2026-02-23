@@ -1,0 +1,117 @@
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+const con = require("../config/db")
+
+exports.register = (req, res) => {
+  try {
+    const { name, email, password, phone ,role } = req.body;
+
+    // เงื่อนไขหากข้อมูลว่าง
+    if (!name) {
+      return res.status(400).send("กรุณาใส่ชื่อ");
+    } else if (!email) {
+      return res.status(400).send("กรุณากรอกอีเมล")
+    } else if (!password) {
+      return res.status(400).send("กรุณาใส่รหัส");
+    } else if (!phone) {
+      return res.status(400).send("กรุณาใส่เบอร์");
+    }
+
+    // เช็ค user หากมีข้อมูลซ้ำ
+    const checkUser = "SELECT * FROM users WHERE email =? ";
+
+    con.query(checkUser, email, async (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).send("Err");
+      }
+      if (result.length > 0) {
+        return res.status(400).send("มีชื่อผู้ใช้ในระบบเเล้ว");
+      }
+
+      // ทำการ hash password
+      const sql = `INSERT INTO users (name , email  ,password_hash ,phone,role) VALUES (?,?,?,?,?)`;
+      const hashPass = await bcrypt.hash(password, 10);
+
+      // เพิ่มข้อมูล
+      con.query(sql, [name, email, hashPass, phone ,role], (err, result) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).send("Server Err");
+        }
+      });
+      res.json({ message: `Success` , insertId: result.insertId });
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Err จร้า");
+  }
+};
+
+exports.login = (req,res)=>{
+    try{
+        const {email,password} = req.body
+        if(!email){
+            return res.send("กรุณากรอกอีเมล")
+        } else if(!password){
+            return res.send("กรุณากรอกรหัสผ่าน")
+        }
+        
+        const checkuser = "SELECT * FROM users WHERE email = ?"
+        con.query(checkuser,email, async(err,result)=>{
+
+            if(err){
+                console.log(err)
+                res.status(500).send("err จร้า")
+            }
+
+            if(result.length === 0){
+                return res.status(400).send("กรุณาสมัครบัญชี")
+            }
+
+            const isPassword = await bcrypt.compare(
+                password , result[0].password_hash
+            );
+            if(!isPassword){
+                return res.status(400).send("รหัสไม่ถูกต้อง")
+            }
+            var payload ={
+                id : result[0].id,
+                name: result[0].name,
+                email: result[0].email,
+                phone: result[0].phone,
+                role: result[0].role
+            };
+            jwt.sign(payload, process.env.JWT_SECRET,
+              {expiresIn: "10m"},(err,token)=>{
+                if(err) throw err
+                res.json({payload,token})
+              }
+            )
+            
+        })
+    }catch(err){
+        console.log(err)
+        res.status(500).send("Login Err")
+    }
+}
+
+exports.current =(req,res)=>{
+   try {
+
+    console.log("current", req.user);
+    const email = req.user.email; 
+    const sql = "SELECT * FROM users WHERE email = ?";
+    con.query(sql, [email], (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).send("DB ERROR");
+      }
+      res.json(result[0]);
+    });
+
+  }catch(err){
+    console.log(err)
+    res.status(500).send("niceguy")
+  }
+}
