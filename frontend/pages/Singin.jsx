@@ -27,7 +27,14 @@ function Singin() {
         token : res.data.token,
       }))
       console.log(res.data.payload.role)
-      localStorage.setItem("token",res.data.token)
+      localStorage.setItem("token",res.data.token )
+      localStorage.setItem("user", JSON.stringify(res.data.payload))
+      if(res.data.payload.role === "admin"){
+        nav("/admin")
+      } else if(res.data.payload.role === "customer"){
+        nav("/")
+      }
+      // console.log(res.data)
       // roleRedirects(res.data.payload.role)
       nav("/")
     } catch (err) {
