@@ -18,7 +18,7 @@ const Navbar = () => {
 
   if (user?.role === "customer") {
     return (
-      <div className="flex flex-row sticky top-0 w-full bg-white text-3xl items-center drop-shadow-2xl">
+      <div className="flex flex-row sticky z-50 top-0 w-full bg-white text-3xl items-center drop-shadow-2xl">
         <div>
           <h1 className="flex items-center font-bold text-3xl text-[var(--clorblue)] m-3">
             <RiHotelLine className="text-[50px] items-center" />
@@ -27,11 +27,14 @@ const Navbar = () => {
         </div>
         <div className="flex flex-row gap-5 items-center ml-auto mr-10 text-xl">
           <ul className="flex justify-end ml-10 gap-10 text-xl">
-            <li className="hover:text-[var(--clorblue)] text-[var(--text-colorS)] cursor-pointer">
+            <li onClick={()=>nav("/")} className="hover:text-[var(--clorblue)] text-[var(--text-colorS)] cursor-pointer">
               หน้าเเรก
             </li>
-            <li className="hover:text-[var(--clorblue)] text-[var(--text-colorS)] cursor-pointer">
+            <li onClick={()=>nav("/Hotels")} className="hover:text-[var(--clorblue)] text-[var(--text-colorS)] cursor-pointer">
               โรงเเรม
+            </li>
+            <li onClick={()=>nav("/listcheck")} className="hover:text-[var(--clorblue)] text-[var(--text-colorS)] cursor-pointer">
+              รายการ
             </li>
           </ul>
           <p
@@ -60,7 +63,7 @@ const Navbar = () => {
   }
 
   return (
-    <div className="flex flex-row bg-white text-3xl items-center drop-shadow-2xl">
+    <div className="flex flex-row z-50 bg-white text-3xl items-center drop-shadow-2xl">
       <div>
         <h1 className="flex items-center font-bold text-3xl text-[var(--clorblue)] m-3">
           <RiHotelLine className="text-[50px] items-center" />
@@ -69,10 +72,10 @@ const Navbar = () => {
       </div>
       <div className="flex flex-row gap-5 items-center ml-auto mr-10 text-xl">
         <ul className="flex justify-end ml-10 gap-10 text-xl">
-          <li className="hover:text-[var(--clorblue)] text-[var(--text-colorS)] cursor-pointer">
+          <li onClick={()=>nav("/")} className="hover:text-[var(--clorblue)] text-[var(--text-colorS)] cursor-pointer">
             หน้าเเรก
           </li>
-          <li className="hover:text-[var(--clorblue)] text-[var(--text-colorS)] cursor-pointer">
+          <li onClick={()=>nav("/Hotels")} className="hover:text-[var(--clorblue)] text-[var(--text-colorS)] cursor-pointer">
             โรงเเรม
           </li>
         </ul>

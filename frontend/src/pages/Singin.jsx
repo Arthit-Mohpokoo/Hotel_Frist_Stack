@@ -5,7 +5,7 @@ import { redirect, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { login } from "../store/usergettoken";
 import { useDispatch } from "react-redux";
-
+import { FaRegCreditCard } from "react-icons/fa";
 function Singin() {
   const nav = useNavigate();
   const dispatch = useDispatch();
@@ -18,7 +18,6 @@ function Singin() {
         password: data.get("password"),
       };
       const res = await axios.post("http://localhost:5500/api/SingIn",loin);
-      // nav("/home")
       alert(res.data);
       dispatch(login({
         email : res.data.payload.email,
@@ -32,10 +31,8 @@ function Singin() {
       if(res.data.payload.role === "admin"){
         nav("/admin")
       } else if(res.data.payload.role === "customer"){
-        nav("/")
+        nav("/Home")
       }
-      // console.log(res.data)
-      // roleRedirects(res.data.payload.role)
       nav("/")
     } catch (err) {
       console.log(err);
@@ -90,7 +87,7 @@ function Singin() {
               </a>
             </div>
             <input
-              className="mt-6 w-[80%] h-10 rounded-xl text-white bg-[var(--clorblue)] hover:bg-[var(--hoverblue)] transition"
+              className=" mt-6 w-[80%] h-10 rounded-xl text-white bg-[var(--clorblue)] hover:bg-[var(--hoverblue)] transition"
               type="submit"
               value="Sign In"
             />

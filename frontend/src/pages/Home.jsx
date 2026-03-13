@@ -1,10 +1,23 @@
-import React from "react";
-import Navbar from "../layout/navbar";
+import React, { useEffect, useState } from "react";
+import Navbar from "../layout/Navbar";
 import { CiSearch } from "react-icons/ci";
 import { PiStarFourThin } from "react-icons/pi";
 import { HiOutlineArrowTrendingUp } from "react-icons/hi2";
 import { MdOutlineSecurity } from "react-icons/md";
+import { listhotel } from "../funtions/auth";
+import { Link } from "react-router-dom";
+
 export const Home = () => {
+  const [data, setdata] = useState([]);
+
+  useEffect(() => {
+    listhotel()
+      .then((res) => {
+        setdata(res.data);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
   return (
     <div>
       <Navbar className="fixed top-0 left-0 w-full z-50 bg-white shadow-md" />
@@ -81,13 +94,54 @@ export const Home = () => {
       </div>
       <div>
         <div className="flex flex-col items-start ml-10 ">
-          <h1 className="text-3xl font-bold text-center mt-10 ml-5">โรงเเรมเเนะนำ</h1>
+          <h1 className="text-3xl font-bold text-center mt-10 ml-5">
+            โรงเเรมเเนะนำ
+          </h1>
           <p>โรงแรมยอดนิยมที่ได้รับคะแนนรีวิวสูงสุด</p>
         </div>
       </div>
-      
-      <div>
 
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+        {data &&
+          data.slice(0, 3).map((item, index) => (
+            <Link
+              key={item.id || index}
+              to={`/Hotels/${item.id}`}
+              className="blox"
+            >
+              <div
+                key={index}
+                className="drop-shadow-2xl rounded-3xl group cursor-pointer overflow-hidden"
+              >
+                {!item.imghotel ? (
+                  <div
+                    className="w-full h-48 bg-gray-200 bg-cover flex items-center justify-center group-hover:scale-105 
+                transition-all duration-300 ease-in-out"
+                  >
+                    noimg
+                  </div>
+                ) : (
+                  <div
+                    className="w-full h-48 bg-gray-200 bg-cover flex items-center justify-center group-hover:scale-105 
+                transition-all duration-300 ease-in-out"
+                    style={{
+                      backgroundImage: `url(http://localhost:5500/upload/rooms/${item.imghotel})`,
+                    }}
+                  ></div>
+                )}
+                <div className="p-4 bg-white text-black">
+                  <h1 className="text-3xl font-bold group-hover:text-[var(--clorblue)] duration-300">
+                    {item.name}
+                  </h1>
+                  <h2>
+                    {item.city}, {item.country}
+                  </h2>
+                  <p>{item.description}</p>
+                  <p>{item.address}</p>
+                </div>
+              </div>
+            </Link>
+          ))}
       </div>
     </div>
   );
