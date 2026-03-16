@@ -47,6 +47,10 @@ export const hotelread = async (id) => {
   });
 };
 
+export const search = async (view) => {
+  return await axios.get(import.meta.env.VITE_API + `/search`, { params: view });
+};
+
 export const hoteledit = async (id, formData) => {
   const token = localStorage.getItem("token");
   return await axios.put(import.meta.env.VITE_API + `/hotel/${id}`, formData, {
@@ -83,6 +87,14 @@ export const customerCheckin = async (id) => {
 export const databook = async (id) => {
   const token = localStorage.getItem("token");
   return await axios.post(import.meta.env.VITE_API + `/dashboard/owner`, {id}, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+export const databookpls = async (id) => {
+  const token = localStorage.getItem("token");
+  return await axios.post(import.meta.env.VITE_API + `/dashboard/ownercheck`, {id}, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

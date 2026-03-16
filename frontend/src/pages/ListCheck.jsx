@@ -5,6 +5,7 @@ import axios from "axios";
 import Navbar from "../layout/Navbar";
 import { Link } from "react-router-dom";
 import { Sliderimg } from "../funtions/sliderimg";
+import { review } from "../funtions/auth";
 
 const STATUS_CONFIG = {
   paid: {
@@ -146,7 +147,39 @@ const FilterTab = ({ label, count, active, onClick }) => (
 
 const BookingCard = ({ item, index, onCancel }) => {
   const config = STATUS_CONFIG[item.status] || STATUS_CONFIG["pending"];
+  const [showbox, setShowbox] = useState(false);
+  const [rating, setRating] = useState(0);
 
+  const [reviewData, setReviewData] = useState({
+    userid: item.user_id,
+    hotel_id: item.room?.hotel_id,
+    rating: 0,
+    comment: "",
+    booking: item.id,
+  });
+  
+  const handleChange = (e) => {
+    setReviewData({ ...reviewData, [e.target.name]: e.target.value });
+  };
+  const handleClick = (e, starIndex) => {
+    const { left, width } = e.target.getBoundingClientRect();
+    const isHalf = e.clientX - left < width / 2;
+    const newRating = isHalf ? starIndex - 0.5 : starIndex;
+    setRating(newRating); 
+    setReviewData({ ...reviewData, rating: newRating });
+  };
+  const comment = () => {
+    console.log(reviewData);
+    review(reviewData)
+      .then((res) => {
+        console.log(res);
+        setShowbox(!showbox);
+      })
+      .catch((err) => {
+        alert(err.response?.data || "เกิดข้อผิดพลาด");
+        setShowbox(!showbox);
+      });
+  };
   const formatDate = (dateStr) => {
     if (!dateStr) return "-";
     const d = new Date(dateStr);
@@ -288,6 +321,62 @@ const BookingCard = ({ item, index, onCancel }) => {
             </button>
           </div>
         )}
+        <div>
+          {}
+          {item.status === "completed" && (
+            <div>
+              <button
+                onClick={() => setShowbox(!showbox)}
+                className="border-blue-500 border text-blue-600 w-25 flex items-center m-3 justify-center rounded-2xl bg-blue-100 cursor-pointer"
+              >
+                comment
+              </button>
+            </div>
+          )}
+        </div>
+        {showbox && (
+          <div
+            className="w-2/3 bg-white shadow-lg rounded-xl absolute flex flex-col gap-3 p-5
+                      top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50"
+          >
+            <div className="flex gap-1 text-amber-400 text-3xl">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span
+                  key={star}
+                  onClick={(e) => handleClick(e, star)}
+                  className="cursor-pointer select-none"
+                >
+                  {rating >= star ? "★" : rating >= star - 0.5 ? "⯨" : "☆"}
+                </span>
+              ))}
+              <span className="text-sm text-gray-500 self-center ml-2">
+                {rating} คะแนน
+              </span>
+              <span
+                onClick={() => setShowbox(!showbox)}
+                className="flex justify-end w-[60%] text-red-500"
+              >
+                x
+              </span>
+            </div>
+
+            <input
+              type="text"
+              name="comment"
+              value={reviewData.comment}
+              onChange={handleChange}
+              placeholder="เขียนรีวิว..."
+              className="border rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-amber-300"
+            />
+
+            <button
+              onClick={comment}
+              className="bg-amber-400 hover:bg-amber-500 text-white rounded-lg py-2 font-semibold"
+            >
+              ส่งรีวิว
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -298,10 +387,10 @@ const ListCheck = () => {
   const [bookings, setBookings] = useState([]);
   const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     loaddata();
   }, []);
-
   const loaddata = async () => {
     setLoading(true);
     try {
@@ -351,8 +440,11 @@ const ListCheck = () => {
     { key: "cancelled", label: "ยกเลิก" },
   ];
   const STATUS_ORDER = { pending: 0, paid: 1, completed: 2, cancelled: 3 };
-  const filtered = (filter === "all" ? bookings:bookings.filter((b)=> b.status === filter))
-  .sort((a,b)=>(STATUS_ORDER[a.status] ?? 99) - (STATUS_ORDER[b.status]??99));
+  const filtered = (
+    filter === "all" ? bookings : bookings.filter((b) => b.status === filter)
+  ).sort(
+    (a, b) => (STATUS_ORDER[a.status] ?? 99) - (STATUS_ORDER[b.status] ?? 99),
+  );
 
   const countByStatus = (key) =>
     key === "all"

@@ -5,7 +5,6 @@ exports.bookings = async (req, res) => {
     const { userid, roomid, check_in, check_out, totalp, status, _met } =
       req.body;
     console.log("REQ BODY:", req.body);
-    // เช็คข้อมูลครบไหม
     if (!userid || !roomid) {
       return res.status(400).send("กรุณากรอกข้อมูลให้ครบ");
     }
@@ -79,7 +78,32 @@ exports.resdatabook = async (req, res) => {
        JOIN rooms ON bookings.room_id = rooms.id
        JOIN hotels ON rooms.hotel_id = hotels.id
        WHERE hotels.owner_id = ?`,
-      [id]
+      [id],
+    );
+    res.json(bookings);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+};
+exports.resdatabookplse = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const [bookings] = await con.query(
+      `SELECT
+        bookings.id AS booking_id,
+        bookings.check_in,
+        bookings.check_out,
+        bookings.total_price,
+        bookings.status,
+        rooms.name AS room_name,
+        hotels.name AS hotel_name
+       FROM bookings
+       JOIN rooms ON bookings.room_id = rooms.id
+       JOIN hotels ON rooms.hotel_id = hotels.id
+       WHERE hotels.owner_id = ?
+  AND bookings.status = 'pending'`,
+      [id],
     );
     res.json(bookings);
   } catch (err) {
@@ -141,6 +165,48 @@ exports.cancelBooking = async (req, res) => {
       [booking.room_id, booking.check_in, booking.check_out],
     );
     res.json({ message: "ยกเลิกสำเร็จ" });
+  } catch (err) {
+    console.log("ERROR:", err.message);
+    res.status(500).send("เกิดข้อผิดพลาด");
+  }
+};
+
+exports.review = async (req, res) => {
+  try {
+    const { userid, rating, comment, booking } = req.body;
+    console.log("booking id ที่รับมา:", booking, "| type:", typeof booking)
+    const [bookingRow] = await con.query(
+      `SELECT rooms.hotel_id 
+       FROM bookings 
+       JOIN rooms ON bookings.room_id = rooms.id 
+       WHERE bookings.id = ?`,
+      [booking],
+    );
+
+    if (bookingRow.length === 0) {
+      return res.status(400).send("ไม่พบการจอง");
+    }
+
+    const hotel_id = bookingRow[0].hotel_id;
+    console.log("hotel_id จาก DB:", hotel_id);
+    const [row] = await con.query(
+      `SELECT * FROM reviews WHERE booking_id = ?`,
+      [booking],
+    );
+    console.log(row.length)
+    if (row.length > 0) {
+      return res.status(400).send("คุณได้คอมเม้นไปแล้ว");
+    }
+
+    const [result] = await con.query(
+      `INSERT INTO reviews (user_id, hotel_id, rating, comment, booking_id) 
+       VALUES (?, ?, ?, ?, ?)`,
+      [userid, hotel_id, rating, comment, booking],
+    );
+
+    return res
+      .status(201)
+      .send({ message: "รีวิวสำเร็จ", insertId: result.insertId });
   } catch (err) {
     console.log("ERROR:", err.message);
     res.status(500).send("เกิดข้อผิดพลาด");

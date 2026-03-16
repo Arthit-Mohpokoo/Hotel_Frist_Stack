@@ -118,7 +118,7 @@ const ManagerHotel = () => {
                 {!item.imghotel ? (
                   <div className="w-full h-48 bg-gray-200 flex items-center justify-center group-hover:scale-105 transition-all duration-300 ease-in-out">
                     noimg
-                    <div className="flex absolute top-4 right-4 w-[34%] justify-between">
+                    <div className="flex absolute top-4 right-4 w-[28%] justify-between">
                       <div className="w-10 h-8 bg-white flex justify-center items-center rounded-xl">
                         <FaStar className="text-[#ffd000]" /> 10
                       </div>
@@ -128,7 +128,7 @@ const ManagerHotel = () => {
                           e.preventDefault();
                           nav(`/Hotels/edithotel/${item.id}`);
                         }}
-                        className="w-10 h-8 bg-[#ff0707] flex justify-center items-center rounded-xl"
+                        className="w-10 h-8 bg-[#0077ff] flex justify-center items-center rounded-xl"
                       >
                         <MdEdit className="text-[#ffff]" />
                       </div>
@@ -151,7 +151,7 @@ const ManagerHotel = () => {
                       backgroundImage: `url(http://localhost:5500/upload/rooms/${item.imghotel})`,
                     }}
                   >
-                    <div className="flex absolute top-4 right-4 w-[34%] justify-between">
+                    <div className="flex absolute top-4 right-4 w-[28%] justify-between">
                       <div className="w-10 h-8 bg-white flex justify-center items-center rounded-xl">
                         <FaStar className="text-[#ffd000]" /> 10
                       </div>
@@ -161,7 +161,7 @@ const ManagerHotel = () => {
                           e.preventDefault();
                           nav(`/Hotels/edithotel/${item.id}`);
                         }}
-                        className="w-10 h-8 bg-[#ff0707] flex justify-center items-center rounded-xl"
+                        className="w-10 h-8 bg-[#0077ff] flex justify-center items-center rounded-xl"
                       >
                         <MdEdit className="text-[#ffff]" />
                       </div>
@@ -185,8 +185,8 @@ const ManagerHotel = () => {
                   <h2 className="flex items-center">
                     <IoLocationSharp /> {item.city}, {item.country}
                   </h2>
-                  <p>{item.description}</p>
-                  <p>{item.address}</p>
+                  <p className="p-2">{item.description}</p>
+                  <p className="p-2">{item.address}</p>
                 </div>
               </div>
             </Link>

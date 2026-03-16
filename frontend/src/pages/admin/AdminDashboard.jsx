@@ -92,7 +92,6 @@ const AdminDashboard = () => {
     setTimeout(() => setToast(null), 3000);
   };
 
-  // ── fetchers ──
   const fetchStats = async () => {
     setLoadingStats(true);
     try {
@@ -129,7 +128,6 @@ const AdminDashboard = () => {
     }
   };
 
-  // ── actions ──
   const handleBan = async (id, isBanned) => {
     try {
       if (isBanned) await unbanUser(id);
@@ -201,12 +199,10 @@ const AdminDashboard = () => {
       การจอง: Number(m.bookings),
       รายได้: Number(m.revenue),
     }));
-    // เอา N เดือนล่าสุดตาม chartRange
+
     return all.slice(-chartRange);
   }, [stats, chartRange]);
 
-  // ── render ──
-  // รอ Redux โหลด token/user ก่อน ป้องกัน redirect ผิด
   if (authLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">

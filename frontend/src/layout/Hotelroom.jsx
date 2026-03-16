@@ -201,7 +201,7 @@ const Hotelroom = () => {
                       </div>
                     </div>
                     <div className="flex items-end mt-4 justify-between">
-                      <div className="flex relative bg-amber-200 justify-start items-start w-[45%]">
+                      <div className="flex relative justify-start items-start w-[45%]">
                         <span className="text-2xl font-bold text-[var(--clorblue)]">
                           ฿{Number(item.base_price).toLocaleString()}
                         </span>

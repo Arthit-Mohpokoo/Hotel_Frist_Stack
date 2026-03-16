@@ -29,7 +29,6 @@ const HotelEdit = () => {
   const loadData = () => {
     hotelread(params.id)
       .then((res) => {
-        // console.log(res.data)
         const d = res.data;
         setForm({
           name: d.name || "",

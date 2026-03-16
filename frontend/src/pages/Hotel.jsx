@@ -27,7 +27,7 @@ const Hotel = () => {
           พบโรงแรม {"icon"} แห่งที่ตรงกับการค้นหาของคุณ
         </p>
         <div className="row-auto flex h-full mt-5">
-          <div className="w-[20%] p-3 ">
+          {/* <div className="w-[20%] p-3 ">
             <form encType="multipart/form-data">
               <div className=" h-auto top-5 p-5 rounded-2xl shadow-2xl">
                 <div className="row flex justify-between font-bold text-2xl ">
@@ -151,7 +151,7 @@ const Hotel = () => {
                 </div>
               </div>
             </form>
-          </div>
+          </div> */}
           <div className="w-[80%]">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
               {data &&
@@ -187,8 +187,8 @@ const Hotel = () => {
                         <h2 className="flex row-auto ">
                           <IoLocationSharp className="mt-1" /> {item.city}, {item.country}
                         </h2>
-                        <p>{item.description}</p>
-                        <p>{item.address}</p>
+                        <p className="p-2">{item.description}</p>
+                        <p className="p-2">{item.address}</p>
                       </div>
                     </div>
                   </Link>

@@ -3,8 +3,8 @@ const route = express.Router();
 const {list,read,create ,edit,remove, listid} = require("../controllers/Hotel");
 const { authCheck } = require("../middleware/auth");
 const { upload} = require("../middleware/upload");
+const { bookings, customereq, cancelBooking, resdatabook, updatebooking,resdatabookplse,review } = require("../controllers/Booking_send");
 const { search } = require("../controllers/hotelse");
-const { bookings, customereq, cancelBooking, resdatabook, updatebooking } = require("../controllers/Booking_send");
 
 route.get("/hotel",list)
 route.get("/hotelmanager/:id",listid)
@@ -14,13 +14,15 @@ route.put("/hotel/:id",authCheck,upload.array("images"),edit)
 route.post("/hotel/delete", authCheck, remove)
 
 
-route.post("/hotel/search/",search)
+route.get("/search",search)
 
 
 route.post("/booking",authCheck,bookings)
 route.get("/checkbook/:id",customereq)
 route.post("/cancelbooking", authCheck, cancelBooking)
 route.post("/dashboard/owner",authCheck,resdatabook)
+route.post("/dashboard/ownercheck",authCheck,resdatabookplse)
 route.put("/bookings/update", authCheck, updatebooking);
+route.post("/review", authCheck, review);
 
 module.exports = route;

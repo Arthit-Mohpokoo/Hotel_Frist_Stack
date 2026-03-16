@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../store/usergettoken";
 import { CiUser } from "react-icons/ci";
-import { databook } from "../funtions/room";
+import { databookpls } from "../funtions/room";
 
 const Navbar = () => {
   const [navbar, setnavbar] = useState(false);
@@ -42,7 +42,7 @@ const Navbar = () => {
   }, []);
 
   const loadata = () => {
-    databook(user.id)
+    databookpls(user.id)
       .then((res) => setdata(res.data))
       .catch((err) => console.log(err));
   };
@@ -196,10 +196,10 @@ const Navbar = () => {
             Admin Dashboard
           </Link>
         )}
-        {showDashboard && (
+        {user.role === "hotel_owner" && (
           <Link
             to={`/dashboard/owner/${user.name}`}
-            className="relative flex items-center gap-2.5 px-3 py-2 text-sm text-gray-600 hover:text-[var(--clorblue)] hover:bg-blue-50 rounded-lg transition-all duration-150"
+            className="flex items-center gap-2.5 px-3 py-2 text-sm text-red-500 hover:text-white hover:bg-red-500 rounded-lg transition-all duration-150 font-medium"
             onClick={() => setnavbar(false)}
           >
             <svg
@@ -212,17 +212,13 @@ const Navbar = () => {
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
               />
             </svg>
-            ผู้เข้าพัก
-            {data?.length > 0 && (
-              <span className="ml-auto bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                {data.length}
-              </span>
-            )}
+            Dashboard {user.name}
           </Link>
         )}
+\
       </div>
 
       <div className="p-2 pt-0">
