@@ -6,6 +6,7 @@ import { HiOutlineArrowTrendingUp } from "react-icons/hi2";
 import { MdOutlineSecurity } from "react-icons/md";
 import { listhotel } from "../funtions/auth";
 import { Link } from "react-router-dom";
+import { IoLocationSharp } from "react-icons/io5";
 
 export const Home = () => {
   const [data, setdata] = useState([]);
@@ -122,8 +123,7 @@ export const Home = () => {
                   </div>
                 ) : (
                   <div
-                    className="w-full h-48 bg-gray-200 bg-cover flex items-center justify-center group-hover:scale-105 
-                transition-all duration-300 ease-in-out"
+                    className="w-full h-48 bg-gray-200 bg-cover bg-center group-hover:scale-105 transition-all duration-300 ease-in-out"
                     style={{
                       backgroundImage: `url(http://localhost:5500/upload/rooms/${item.imghotel})`,
                     }}
@@ -133,8 +133,8 @@ export const Home = () => {
                   <h1 className="text-3xl font-bold group-hover:text-[var(--clorblue)] duration-300">
                     {item.name}
                   </h1>
-                  <h2>
-                    {item.city}, {item.country}
+                  <h2 className="flex row-auto" >
+                    <IoLocationSharp className="mt-1" /> {item.city}, {item.country}
                   </h2>
                   <p>{item.description}</p>
                   <p>{item.address}</p>

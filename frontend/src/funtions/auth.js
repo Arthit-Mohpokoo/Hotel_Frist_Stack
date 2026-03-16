@@ -16,6 +16,11 @@ export const currentUser = (token) => {
 export const listhotel = async (data)=>{
   return await axios.get(import.meta.env.VITE_API + "/hotel",data)
 }
+export const createhotel = async (data)=>{
+  return await axios.post(import.meta.env.VITE_API + "/hotel",data)
+}
+
+
 export const read = async (id)=>{
   return await axios.get(import.meta.env.VITE_API + "/hotel/" + id)
 }

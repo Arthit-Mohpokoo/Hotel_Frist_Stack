@@ -57,7 +57,6 @@ const Hotel = () => {
                       className="w-full h-10 border rounded px-3"
                     >
                       <option value="">เลือกจังหวัด</option>
-
                       <option value="กรุงเทพมหานคร">กรุงเทพมหานคร</option>
                       <option value="กระบี่">กระบี่</option>
                       <option value="กาญจนบุรี">กาญจนบุรี</option>
@@ -156,38 +155,37 @@ const Hotel = () => {
           <div className="w-[80%]">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
               {data &&
-                data.map((item, index) => (
-                  <Link  key={item.id || index} to={`/Hotels/${item.id}`} className="blox">
+                data.slice(0, 3).map((item, index) => (
+                  <Link
+                    key={item.id || index}
+                    to={`/Hotels/${item.id}`}
+                    className="blox"
+                  >
                     <div
                       key={index}
-                      className="drop-shadow-2xl rounded-3xl group cursor-pointer overflow-hidden w-95"
+                      className="drop-shadow-2xl rounded-3xl group cursor-pointer overflow-hidden"
                     >
                       {!item.imghotel ? (
                         <div
-                          className="w-95 h-48 bg-gray-200 bg-cover flex items-center justify-center group-hover:scale-105 
-                transition-all duration-300 ease-in-out"
+                          className="w-full h-48 bg-gray-200 bg-cover flex items-center justify-center group-hover:scale-105 
+                             transition-all duration-300 ease-in-out"
                         >
                           noimg
                         </div>
                       ) : (
                         <div
-                          className="w-95 h-48 bg-gray-200 bg-cover flex items-center justify-center group-hover:scale-105 
-                transition-all duration-300 ease-in-out"
+                          className="w-full h-48 bg-gray-200 bg-cover bg-center group-hover:scale-105 transition-all duration-300 ease-in-out"
                           style={{
                             backgroundImage: `url(http://localhost:5500/upload/rooms/${item.imghotel})`,
                           }}
-                        >
-                          <div className="w-10 h-8 bg-white top-4 flex justify-center items-center absolute right-4 rounded-xl">
-                            <FaStar className="text-x text-[#ffd000]" /> 10
-                          </div>
-                        </div>
+                        ></div>
                       )}
                       <div className="p-4 bg-white text-black">
-                        <h1 className="text-[20px] font-bold group-hover:text-[var(--clorblue)] duration-300">
+                        <h1 className="text-3xl font-bold group-hover:text-[var(--clorblue)] duration-300">
                           {item.name}
                         </h1>
-                        <h2 className="flex items-center">
-                         <IoLocationSharp /> {item.city}, {item.country}
+                        <h2 className="flex row-auto ">
+                          <IoLocationSharp className="mt-1" /> {item.city}, {item.country}
                         </h2>
                         <p>{item.description}</p>
                         <p>{item.address}</p>

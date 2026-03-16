@@ -30,7 +30,7 @@ function Singin() {
       localStorage.setItem("user", JSON.stringify(res.data.payload))
       if(res.data.payload.role === "admin"){
         nav("/admin")
-      } else if(res.data.payload.role === "customer"){
+      } else if(res.data.payload.role === "customer" || res.data.payload.role === "hotel_owner" ){
         nav("/Home")
       }
       nav("/")

@@ -4,13 +4,12 @@ const { upload} = require("../middleware/upload");
 const { authCheck } = require("../middleware/auth");
 const route = express.Router();
 
-// route.post('/hotel/rooms', upload.single("images",5), Rcreate);
-route.post('/hotel/rooms', upload.array("images",5), Rcreate);
-route.delete('/hotel/rooms/:id',authCheck,Rremove)
+route.post('/hotel/rooms',authCheck, upload.array("images",5), Rcreate);
+route.post('/hotel/rooms/Delete',authCheck,Rremove)
 route.get('/hotel/:idhotel/rooms',Rlist)
 route.get('/hotel/rooms/:idhotel/all', Rread)  
 route.get('/hotel/rooms/:idhotel/:id',  Rread)
-route.put('/hotel/rooms/:id',upload.none(),Redit)
+route.put('/hotel/rooms/:id',authCheck,upload.array("images",5),Redit)
 route.post('/roomcheck',checkroom)
 route.post('/listto',Rreadlist)
 

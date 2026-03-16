@@ -58,12 +58,6 @@ exports.login = async(req, res) => {
     }
     const [result] = await con.query("SELECT * FROM users WHERE email = ?", [email]);
     
-    // const checkuser = "SELECT * FROM users WHERE email = ?";
-    // con.query(checkuser, email, async (err, result) => {
-    //   if (err) {
-    //     console.log(err);
-    //     res.status(500).send("err จร้า");
-    //   }
 
       if (result.length === 0) {
         return res.status(400).send("กรุณาสมัครบัญชี");

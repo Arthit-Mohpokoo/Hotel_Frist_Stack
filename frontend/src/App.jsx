@@ -13,7 +13,9 @@ import Hotelroom from "./layout/Hotelroom.jsx";
 import Roomonsub from "./layout/Roomonsub.jsx";
 import Qrcode_Test from "./pages/Qrcode_Test.jsx";
 import ListCheck from "./pages/ListCheck.jsx";
-
+import ManagerHotel from "./pages/owner/managerHotel.jsx";
+import HotelEdit from "./pages/owner/HotelEdit.jsx";
+import RoomEdit from "./pages/owner/RoomEdit.jsx";
 
 function App() {
   const dispatch = useDispatch();
@@ -62,6 +64,9 @@ function App() {
           <Route path="/Hotels/rooms/:idhotel/:id" element={<Roomonsub />} />
           <Route path="/listcheck" element={<ListCheck />} />
         </Route>
+        <Route path="/hotelowner/:id" element={<ManagerHotel/>}/>
+        <Route path="/Hotels/edithotel/:id" element={<HotelEdit/>}/>
+        <Route path="/Hotels/editroom/:hotelId/:roomId" element={<RoomEdit />} />
       </Routes>
     </BrowserRouter>
   );

@@ -9,6 +9,16 @@ exports.list = async (req, res) => {
     res.status(500).send("err อีกเเล้วครับพี่");
   }
 };
+exports.listid = async (req, res) => {
+  try {
+    const id = req.params
+    const [results] = await con.query("SELECT * FROM hotels Where owner_id");
+    res.json(results);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("err อีกเเล้วครับพี่");
+  }
+};
 
 exports.read = async (req, res) => {
   try {
@@ -63,61 +73,91 @@ exports.create = async (req, res) => {
   }
 };
 
-exports.edit = (req, res) => {
+exports.edit = async (req, res) => {
   try {
     const Id = req.params.id;
-    const { ownerid, name, description, address, city, country, lat, lng } =
-      req.body;
+    const { name, description, address, city, country, lat, lng } = req.body;
 
     const userRole = req.user?.role;
     const userId = req.user?.id;
 
     if (userRole !== "admin" && userRole !== "hotel_owner") {
-      return res.status(403).send("ไม่มีสิทธิ์แก้ไข");
-    }
-    if (ownerid != userId && userRole !== "admin") {
-      return res.status(400).send("คุณไม่มีสิทธิ์เเก้ไข1");
+      return res.status(403).json({ message: "ไม่มีสิทธิ์แก้ไข" });
     }
 
-    const sql = `
-          UPDATE hotels 
-          SET owner_id=? , name=?, description=?, address=?, city=?, country=?, lat=?, lng=?
-          WHERE id=?`;
+    const [rows] = await con.query("SELECT owner_id FROM hotels WHERE id = ?", [Id]);
+    if (!rows.length) {
+      return res.status(404).json({ message: "ไม่พบโรงแรม" });
+    }
 
-    con.query(
-      sql,
-      [ownerid, name, description, address, city, country, lat, lng, Id],
-      (err, result) => {
-        if (err) return res.status(500).send("update ผิดพลาด");
-        res.send(result);
-      },
+    if (rows[0].owner_id !== userId && userRole !== "admin") {
+      return res.status(403).json({ message: "คุณไม่มีสิทธิ์แก้ไขโรงแรมนี้" });
+    }
+
+    const fileimg = req.files ? req.files.map((g) => g.filename) : [];
+    const urlimg = req.body.img_urls
+      ? Array.isArray(req.body.img_urls)
+        ? req.body.img_urls
+        : [req.body.img_urls]
+      : [];
+    const allimages = [...fileimg, ...urlimg];
+
+    const [result] = await con.query(
+      `UPDATE hotels 
+       SET name=?, description=?, address=?, city=?, country=?, lat=?, lng=?
+       WHERE id=?`,
+      [name, description, address, city, country, lat, lng, Id]
     );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "ไม่พบโรงแรม หรืออัปเดตไม่สำเร็จ" });
+    }
+
+    if (allimages.length > 0) {
+      await con.query("UPDATE hotels SET imghotel = ? WHERE id = ?", [
+        allimages[0],
+        Id,
+      ]);
+    }
+
+    res.json({ message: "แก้ไขโรงแรมเรียบร้อยแล้ว!", hotelId: Id });
   } catch (err) {
-    res.status(500).send("server error");
+    console.log(err);
+    res.status(500).json({ message: "เกิดปัญหาระหว่างแก้ไข" });
   }
 };
-exports.remove = (req, res) => {
-  try {
-    const Id = req.params.id;
-    const { ownerid } = req.body;
 
+exports.remove = async (req, res) => {
+  try {
+    const {id:Id} = req.body;
     const userRole = req.user?.role;
     const userId = req.user?.id;
 
     if (userRole !== "admin" && userRole !== "hotel_owner") {
-      return res.status(403).send("ไม่มีสิทธิ์แก้ไข");
-    }
-    if (ownerid != userId && userRole !== "admin") {
-      return res.status(400).send("คุณไม่มีสิทธิ์เเก้ไข1");
+      return res.status(403).send("ไม่มีสิทธิ์ลบ");
     }
 
-    const sql = `
-          DELETE FROM hotels WHERE id=?`;
-    con.query(sql, [Id], (err, result) => {
-      if (err) return res.status(500).send("remove ผิดพลาด");
-      res.send(result);
-    });
+    const [rows] = await con.query("SELECT owner_id FROM hotels WHERE id = ?", [Id]);
+    if (!rows.length) return res.status(404).send("ไม่พบโรงแรม");
+    if (rows[0].owner_id !== userId && userRole !== "admin") {
+      return res.status(403).send("คุณไม่มีสิทธิ์ลบโรงแรมนี้");
+    }
+
+    const [rooms] = await con.query("SELECT id FROM rooms WHERE hotel_id = ?", [Id]);
+    const roomIds = rooms.map((r) => r.id);
+
+    if (roomIds.length) {
+      await con.query("DELETE FROM room_images WHERE room_id IN (?)", [roomIds]);
+      await con.query("DELETE FROM room_availability WHERE room_id IN (?)", [roomIds]);
+      await con.query("DELETE FROM bookings WHERE room_id IN (?)", [roomIds]);
+      await con.query("DELETE FROM rooms WHERE hotel_id = ?", [Id]);
+    }
+
+    await con.query("DELETE FROM hotels WHERE id = ?", [Id]);
+
+    res.send({ message: "ลบโรงแรมสำเร็จ", deleted_id: Id });
   } catch (err) {
-    res.status(500).send("server error");
+    console.log(err);
+    res.status(500).send("เกิดข้อผิดพลาด");
   }
 };
