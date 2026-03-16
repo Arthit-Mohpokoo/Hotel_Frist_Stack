@@ -63,6 +63,51 @@ exports.bookings = async (req, res) => {
   }
 };
 
+exports.resdatabook = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const [bookings] = await con.query(
+      `SELECT
+        bookings.id AS booking_id,
+        bookings.check_in,
+        bookings.check_out,
+        bookings.total_price,
+        bookings.status,
+        rooms.name AS room_name,
+        hotels.name AS hotel_name
+       FROM bookings
+       JOIN rooms ON bookings.room_id = rooms.id
+       JOIN hotels ON rooms.hotel_id = hotels.id
+       WHERE hotels.owner_id = ?`,
+      [id]
+    );
+    res.json(bookings);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.updatebooking = async (req, res) => {
+  try {
+    const { id, status } = req.body;
+
+    const [result] = await con.query(
+      `UPDATE bookings SET status = ? WHERE id = ?`,
+      [status, id],
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "ไม่พบ booking นี้" });
+    }
+
+    res.json({ message: "อัปเดตสำเร็จ", affectedRows: result.affectedRows });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
 exports.customereq = async (req, res) => {
   try {
     const { id } = req.params;
@@ -78,30 +123,23 @@ exports.cancelBooking = async (req, res) => {
   try {
     const { id } = req.body;
 
-    // ดึงข้อมูล booking ก่อนเพื่อเอา room_id, check_in, check_out
     const [[booking]] = await con.query(
       `SELECT room_id, check_in, check_out FROM bookings WHERE id = ?`,
-      [id]
+      [id],
     );
 
     if (!booking) {
       return res.status(404).send("ไม่พบการจอง");
     }
-
-    // เปลี่ยน status เป็น cancelled
-    await con.query(
-      `UPDATE bookings SET status = 'cancelled' WHERE id = ?`,
-      [id]
-    );
-
-    // คืนห้องว่างในช่วงวันที่จอง
+    await con.query(`UPDATE bookings SET status = 'cancelled' WHERE id = ?`, [
+      id,
+    ]);
     await con.query(
       `UPDATE room_availability 
        SET is_available = 1 
        WHERE room_id = ? AND date >= ? AND date < ?`,
-      [booking.room_id, booking.check_in, booking.check_out]
+      [booking.room_id, booking.check_in, booking.check_out],
     );
-
     res.json({ message: "ยกเลิกสำเร็จ" });
   } catch (err) {
     console.log("ERROR:", err.message);

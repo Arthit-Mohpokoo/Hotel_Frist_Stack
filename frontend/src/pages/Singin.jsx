@@ -29,11 +29,10 @@ function Singin() {
       localStorage.setItem("token",res.data.token )
       localStorage.setItem("user", JSON.stringify(res.data.payload))
       if(res.data.payload.role === "admin"){
-        nav("/admin")
-      } else if(res.data.payload.role === "customer" || res.data.payload.role === "hotel_owner" ){
-        nav("/Home")
+        nav("/dashboard/Admin")
+      } else if(res.data.payload?.role === "customer" || res.data.payload?.role === "hotel_owner" ){
+        nav("/")
       }
-      nav("/")
     } catch (err) {
       console.log(err);
       alert("ไม่สามารถเข้าสู่ระบบได้");

@@ -14,7 +14,6 @@ const Hotelroom = () => {
   const [data2, setdata2] = useState([]);
   const [roomc, setroomc] = useState(false);
   const params = useParams();
-  const nav = useNavigate();
   const user = useSelector((state) => state.user.user);
   const [roomForm, setRoomForm] = useState({
     name: "",
@@ -201,8 +200,8 @@ const Hotelroom = () => {
                         <span>รองรับ {item.max_guests} คน</span>
                       </div>
                     </div>
-                    <div className="flex items-end mt-4 justify-end">
-                      <div className="flex relative justify-start w-[40%]">
+                    <div className="flex items-end mt-4 justify-between">
+                      <div className="flex relative bg-amber-200 justify-start items-start w-[45%]">
                         <span className="text-2xl font-bold text-[var(--clorblue)]">
                           ฿{Number(item.base_price).toLocaleString()}
                         </span>

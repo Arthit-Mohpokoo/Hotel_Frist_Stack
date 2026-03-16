@@ -16,6 +16,7 @@ app.use(morgan('dev'))
 app.use("/upload", express.static(path.join(__dirname, "upload")));
 
 readdirSync("./routes").map((r) =>{
+    //  console.log("loading route:", r); 
     app.use("/api", require(`./routes/${r}`))
 })
 

@@ -79,6 +79,15 @@ export const removeHotel = async (id) => {
 export const customerCheckin = async (id) => {
   return await axios.get(import.meta.env.VITE_API + "/checkbook/" + id);
 };
+
+export const databook = async (id) => {
+  const token = localStorage.getItem("token");
+  return await axios.post(import.meta.env.VITE_API + `/dashboard/owner`, {id}, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
 export const booking = async (data) => {
   const token = localStorage.getItem("token");
   return await axios.post(import.meta.env.VITE_API + `/booking`, data, {
@@ -87,6 +96,16 @@ export const booking = async (data) => {
     },
   });
 };
+export const updatebooking = async (id, status) => {
+  const token = localStorage.getItem("token");
+  return await axios.put(
+    import.meta.env.VITE_API + `/bookings/update`,
+    { id, status },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+};
+
+
 
 export const checkroom = async (roomid, datein, dateout) => {
   return await axios.post(import.meta.env.VITE_API + `/roomcheck`, {

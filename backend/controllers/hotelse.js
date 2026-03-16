@@ -28,8 +28,8 @@ exports.search = async (req, res) => {
       query = query.replace("WHERE", "WHERE h.name LIKE ? AND");
       params.unshift(`%${keyword}%`);
     }
-    const [results] = await con.query(query, params); // ✅ รัน query จริง
-    res.json({ total: results.length, data: results }); // ✅ ส่งผลกลับ
+    const [results] = await con.query(query, params); 
+    res.json({ total: results.length, data: results });
     console.log({ keyword, checkin, checkout, guests });
   } catch (err) {
     console.log(err);

@@ -7,7 +7,6 @@ import { useDispatch } from "react-redux";
 import { login, setLoading } from "./store/usergettoken.js";
 import UserRoutes from "./routes/UserRoutes.jsx";
 import { Home } from "./pages/Home.jsx";
-import { Homeuser } from "./pages/customer/Home.jsx";
 import Hotel from "./pages/Hotel.jsx";
 import Hotelroom from "./layout/Hotelroom.jsx";
 import Roomonsub from "./layout/Roomonsub.jsx";
@@ -16,6 +15,8 @@ import ListCheck from "./pages/ListCheck.jsx";
 import ManagerHotel from "./pages/owner/managerHotel.jsx";
 import HotelEdit from "./pages/owner/HotelEdit.jsx";
 import RoomEdit from "./pages/owner/RoomEdit.jsx";
+import Dashboard from "./pages/owner/dashboard.jsx";
+import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 
 function App() {
   const dispatch = useDispatch();
@@ -28,7 +29,7 @@ function App() {
         if (user) {
           dispatch(
             login({
-              id:user.id,
+              id: user.id,
               email: user.email,
               name: user.name,
               role: user.role,
@@ -60,13 +61,15 @@ function App() {
     
         <Route path="/Hotels/:id" element={<Hotelroom/>} />
         <Route element={<UserRoutes />}>
-          <Route path="/Home" element={<Homeuser />} />
           <Route path="/Hotels/rooms/:idhotel/:id" element={<Roomonsub />} />
           <Route path="/listcheck" element={<ListCheck />} />
         </Route>
         <Route path="/hotelowner/:id" element={<ManagerHotel/>}/>
         <Route path="/Hotels/edithotel/:id" element={<HotelEdit/>}/>
         <Route path="/Hotels/editroom/:hotelId/:roomId" element={<RoomEdit />} />
+        <Route path="/dashboard/owner/:username" element={<Dashboard />} />
+        <Route path="/dashboard/Admin" element={<AdminDashboard />} />
+
       </Routes>
     </BrowserRouter>
   );
